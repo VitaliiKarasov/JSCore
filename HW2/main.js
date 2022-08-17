@@ -36,21 +36,34 @@ function selectFromInterval(arr, num1, num2) {
   return selection;
 }
 // -----------------3---------------------
-function myIterable(obj) {
-  const iterable = [];
+const iterate = {
+  from: 1,
+  to: 20,
+  [Symbol.iterator]: function () {
+    let i = 0;
+    this.iterable = [];
+    
+    if (this.from > this.to) {
+      throw new Error("TO key cannot be greater than FROM!!!");
+    } else if (isNaN(this.from) || isNaN(this.to)) {
+      throw new Error("Error");
+    }
 
-  if (obj.from > obj.to) {
-    throw new Error("TO key cannot be greater than FROM!!!");
-  } else if (isNaN(obj.from) || isNaN(obj.to)) {
-    throw new Error("Error");
-  }
+    const toNum = this.to;
+    const fromNum = this.from;
 
-  const toNum = obj.to;
-  const fromNum = obj.from;
+    for (let i = fromNum; i <= toNum; i++) {
+      this.iterable.push(i);
+    }
+    return {
+      next: () => ({
+        value: this.iterable[i++],
+        done: i > this.iterable.length,
+      }),
+    };
+  },
+};
 
-  for (let i = fromNum; i <= toNum; i++) {
-    iterable.push(i);
-  }
-
-  return iterable;
+for (const item of iterate) {
+  console.log(item);
 }
