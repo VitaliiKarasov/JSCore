@@ -1,3 +1,10 @@
+class Node {
+  constructor(current) {
+    this.current = current;
+    this.previous = null;
+  }
+}
+
 class Stack {
   constructor(maxSize) {
     if (isNaN(maxSize)) {
@@ -5,13 +12,13 @@ class Stack {
     }
 
     this.maxSize = maxSize;
-    this.items = [];
+    this.head = null;
     this.count = 0;
   }
 
   static fromIterable(iterable) {
     if (!iterable[Symbol.iterator]) {
-      throw new Error('Entity is not iterable');
+      throw new Error("Entity is not iterable");
     }
 
     const stack = new Stack(iterable.length);
@@ -25,10 +32,13 @@ class Stack {
 
   push(element) {
     if (this.count >= this.maxSize) {
-      throw new Error('Stack is overfull');
+      throw new Error("Stack is overfull");
     }
 
-    this.items[this.count] = element;
+    const node = new Node(element);
+
+    node.previous = this.head;
+    this.head = node;
     this.count += 1;
 
     return this.count - 1;
@@ -36,22 +46,26 @@ class Stack {
 
   pop() {
     if (this.count == 0) {
-      throw new Error('Stack is empty');
+      throw new Error("Stack is empty");
     }
 
-    this.count -= 1;
+    if (this.head !== null) {
+      const popValue = this.head.current;
+      this.head = this.head.previous;
+      this.count -= 1;
 
-    const deleteItem = this.items[this.count];
+      return popValue;
+    }
 
-    return deleteItem;
+    return null;
   }
 
   peek() {
-    if (this.count == 0) {
+    if (this.head == null) {
       return null;
     }
 
-    return this.items[this.count - 1];
+    return this.head.current;
   }
 
   isEmpty() {
@@ -59,7 +73,16 @@ class Stack {
   }
 
   toArray() {
-    return Array.from(this.items);
+    const nodes = [];
+
+    let currentNode = this.head;
+
+    while (currentNode) {
+      nodes.push(currentNode);
+      currentNode = currentNode.previous;
+    }
+
+    return nodes;
   }
 }
 
